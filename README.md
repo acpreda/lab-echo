@@ -67,3 +67,55 @@ sección `<properties>` del archivo `pom.xml`
     <maven.resources.plugin.version>3.2.0</maven.resources.plugin.version>
 </properties>
 ```
+
+## JUnit 5
+JUnit es la herramienta de ejecución de pruebas unitarias más conocida. En particular se describe la configuración de la
+versión 5 la cual tiene algunas particularidades que se presentan con Maven.
+
+La ejecución de las pruebas unitarias debe ser integrado con el procedimiento de construcción que se realiza con Maven,
+de tal manera que una vez se compilen los archivos de código fuente Maven ejecute todas y cada una de las pruebas 
+unitarias. Para esto primero recordemos que durante el proceso de construcción que se realiza con Maven existen varias 
+fases y objetivos (target) entre los cuales destaca el objetivo `test` el cual depende directamente del objetivo
+`compile`. Maven incluye un _plugin_ llamado `maven-surefire-plugin` el cual se invoca cuando se ejecuta el objetivo
+`test` y que se encarga de ejecutar todas las pruebas unitarias que se encuentren definidas en el proyecto siguiendo una
+nomenclatura específica: las clases cuyo nombre tenga el sufijo `Test` dentro del directorio `src/test/java`. El plugin
+`maven-surefire-plugin` en versiones anteriores a la `2.22.0` no es compatible con JUnit 5 y por tanto se debe definir
+explícitamente el uso de una versión posterior nn el archivo `pom.xml`, en la sección `<build>` así:
+```xml
+<build>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <version>${maven.surefire.version}</version>
+        </plugin>
+    </plugins>
+</build>
+```
+Ahora, para incluir JUnit 5 como una dependencia en el archivo `pom.xml` en la sección `<dependencies>` se incluye lo
+siguiente:
+```xml
+<dependencies>
+    <dependency>
+        <groupId>org.junit.jupiter</groupId>
+        <artifactId>junit-jupiter</artifactId>
+        <version>${junit.version}</version>
+        <scope>test</scope>
+    </dependency>
+</dependencies>
+```
+Note que el alcance (scope) de la dependencia es `test` lo cual hace que las librerías no se incluya como parte de los
+artefactos que conforman el desplegable sino que únicamente se usan con el propósito de pruebas. Note, además, que tanto
+la versión de JUnit como la versión del plugin Surefire se especifican como variables: `${junit.version}` y 
+`${maven.surefire.version}` respectivamente. Estas variables se deben definir y controlar desde la sección `properties`
+del `pom.xml` así:
+```xml
+<properties>
+    <junit.version>5.7.1</junit.version>
+    <maven.surefire.version>3.0.0-M5</maven.surefire.version>
+</properties>
+```
+Una vez realizada la configuración ya se puede ejecutar el comando Maven para ejecución de pruebas unitarias:
+```bash
+./mvnw test
+```

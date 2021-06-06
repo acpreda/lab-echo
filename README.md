@@ -119,3 +119,72 @@ Una vez realizada la configuración ya se puede ejecutar el comando Maven para e
 ```bash
 ./mvnw test
 ```
+
+
+## JavaDoc
+Para la liberación de una librería o un proyecto es deseable que dicho artefacto vaya acompañado de la documentación
+propia de las clases que lo conforman. Es para esto que se usan las convenciones de comantarios JavaDoc. Maven, mediante
+un plugin es capaz de realizar la extracción de los comantarios con nomenclatura JavaDoc y convertirlos en documentos
+HTML que se empaquetan en un archivo JAR.
+
+En la sección `<build>` del archivo `pom.xml` se incluye el plugin de JavaDoc para que sea ejecutado durante el proceso
+de construcción, así:
+```xml
+<build>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <version>${maven.javadoc.plugin.version}</version>
+            <executions>
+                <execution>
+                    <id>attach-javadocs</id>
+                    <goals>
+                        <goal>jar</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
+</build>
+```
+Nótese que el número de versión del plugin está parametrizado con la variable `${maven.javadoc.plugin.version}` la cual
+se define y controla en la sección `<properties>` del archivo `pom.xml`.
+```xml
+<properties>
+    <maven.javadoc.plugin.version>3.3.0</maven.javadoc.plugin.version>
+</properties>
+```
+## Source
+Para la liberación de una librería o un proyecto es deseable que dicho artefacto vaya acompañado del código fuente a
+partir del cual fue construido. Maven, mediante un plugin es capaz de empaquetar en un archivo JAR los archivos de 
+código fuente.
+
+En la sección `<build>` del archivo `pom.xml` se incluye el plugin `maven-source-plugin` para que sea ejecutado durante 
+el proceso de construcción, así:
+```xml
+<build>
+    <plugins>
+        <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <version>${maven.source.plugin.version}</version>
+            <executions>
+                <execution>
+                    <id>attach-sources</id>
+                    <goals>
+                        <goal>jar-no-fork</goal>
+                    </goals>
+                </execution>
+            </executions>
+        </plugin>
+    </plugins>
+</build>
+```
+Nótese que el número de versión del plugin está parametrizado con la variable `${maven.source.plugin.version}` la cual
+se define y controla en la sección `<properties>` del archivo `pom.xml`.
+```xml
+<properties>
+    <maven.source.plugin.version>3.2.1</maven.source.plugin.version>
+</properties>
+```
